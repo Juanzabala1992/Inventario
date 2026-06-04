@@ -1,0 +1,275 @@
+openapi: 3.0.3
+info:
+  title: Products and Inventory API
+  version: 1.0.0
+  description: JSON API contracts for the Spring Boot products and inventory microservices.
+servers:
+  - url: http://localhost:8081
+    description: Products service
+  - url: http://localhost:8082
+    description: Inventory service
+security:
+  - ApiKeyAuth: []
+paths:
+  /products:
+    post:
+      tags: [Products]
+      summary: Create a product
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ProductDocument"
+    get:
+      tags: [Products]
+      summary: List products
+      responses:
+        "200":
+          description: Products
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ProductResource"
+  /products/{id}:
+    get:
+      tags: [Products]
+      summary: Get a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/ProductDocument"
+        "404":
+          $ref: "#/components/responses/JsonApiError"
+  /inventory/{productId}:
+    get:
+      tags: [Inventory]
+      summary: Get inventory for a product
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Inventory and included product
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/InventoryDocument"
+    put:
+      tags: [Inventory]
+      summary: Set inventory quantity
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/UpdateInventoryRequest"
+      responses:
+        "200":
+          description: Inventory updated
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/InventoryDocument"
+  /purchases:
+    post:
+      tags: [Purchases]
+      summary: Purchase a product and decrement inventory
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: "#/components/schemas/CreatePurchaseRequest"
+      responses:
+        "201":
+          description: Purchase created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/PurchaseDocument"
+        "409":
+          $ref: "#/components/responses/JsonApiError"
+    get:
+      tags: [Purchases]
+      summary: List purchase history
+      responses:
+        "200":
+          description: Purchases
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PurchaseResource"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  responses:
+    JsonApiError:
+      description: JSON API error document
+      content:
+        application/vnd.api+json:
+          schema:
+            $ref: "#/components/schemas/ErrorDocument"
+  schemas:
+    CreateProductRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [products]
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+                  minimum: 0
+                description:
+                  type: string
+                  nullable: true
+    UpdateInventoryRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [inventories]
+            attributes:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 0
+    CreatePurchaseRequest:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [purchases]
+            attributes:
+              type: object
+              properties:
+                productId:
+                  type: string
+                quantity:
+                  type: integer
+                  minimum: 1
+    ProductDocument:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/ProductResource"
+    InventoryDocument:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/InventoryResource"
+        included:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductResource"
+    PurchaseDocument:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/PurchaseResource"
+        included:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductResource"
+    ProductResource:
+      type: object
+      properties:
+        type:
+          type: string
+          example: products
+        id:
+          type: string
+        attributes:
+          type: object
+    InventoryResource:
+      type: object
+      properties:
+        type:
+          type: string
+          example: inventories
+        id:
+          type: string
+        attributes:
+          type: object
+        relationships:
+          type: object
+    PurchaseResource:
+      type: object
+      properties:
+        type:
+          type: string
+          example: purchases
+        id:
+          type: string
+        attributes:
+          type: object
+        relationships:
+          type: object
+    ErrorDocument:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              title:
+                type: string
+              detail:
+                type: string
+
