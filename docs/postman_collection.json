@@ -1,0 +1,320 @@
+{
+  "info": {
+    "_postman_id": "5c6f58c1-3a4b-4d7b-a9bb-1f2f1a4f4f90",
+    "name": "Inventory Vue Spring Boot - Local",
+    "description": "Local Postman collection for the JSON API products and inventory microservices.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "productsUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "inventoryUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "apiKey",
+      "value": "local-dev-key"
+    },
+    {
+      "key": "productId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Products health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "url": {
+              "raw": "{{productsUrl}}/health",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('product created', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "if (body.data && body.data.id) {",
+                  "  pm.collectionVariables.set('productId', body.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.api+json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"type\": \"products\",\n    \"attributes\": {\n      \"name\": \"Keyboard\",\n      \"price\": 125500,\n      \"description\": \"Mechanical keyboard\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{productsUrl}}/products",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "url": {
+              "raw": "{{productsUrl}}/products",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get product by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "url": {
+              "raw": "{{productsUrl}}/products/{{productId}}",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "products",
+                "{{productId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Inventory health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "url": {
+              "raw": "{{inventoryUrl}}/health",
+              "host": [
+                "{{inventoryUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Set inventory quantity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.api+json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"type\": \"inventories\",\n    \"attributes\": {\n      \"quantity\": 10\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{inventoryUrl}}/inventory/{{productId}}",
+              "host": [
+                "{{inventoryUrl}}"
+              ],
+              "path": [
+                "inventory",
+                "{{productId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get inventory by product",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "url": {
+              "raw": "{{inventoryUrl}}/inventory/{{productId}}",
+              "host": [
+                "{{inventoryUrl}}"
+              ],
+              "path": [
+                "inventory",
+                "{{productId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Purchases",
+      "item": [
+        {
+          "name": "Create purchase",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/vnd.api+json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": {\n    \"type\": \"purchases\",\n    \"attributes\": {\n      \"productId\": \"{{productId}}\",\n      \"quantity\": 2\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{inventoryUrl}}/purchases",
+              "host": [
+                "{{inventoryUrl}}"
+              ],
+              "path": [
+                "purchases"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List purchases",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/vnd.api+json"
+              }
+            ],
+            "url": {
+              "raw": "{{inventoryUrl}}/purchases",
+              "host": [
+                "{{inventoryUrl}}"
+              ],
+              "path": [
+                "purchases"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

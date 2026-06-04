@@ -1,6 +1,7 @@
 node_modules/
 dist/
 target/
+.vite/
 .idea/
 .vscode/
 .env
@@ -8,4 +9,3 @@ target/
 *.db
 *.mv.db
 *.trace.db
-
