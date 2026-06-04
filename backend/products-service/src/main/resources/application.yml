@@ -1,0 +1,26 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+service:
+  api-key: ${SERVICE_API_KEY:local-dev-key}
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:file:./data/products-db}
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
