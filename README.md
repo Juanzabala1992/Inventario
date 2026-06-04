@@ -183,7 +183,28 @@ mvn test
 
 ## Git Flow
 
-La estrategia sugerida esta en [`docs/git-flow.md`](docs/git-flow.md).
+El repositorio aplica Git Flow para separar desarrollo, integracion y versiones
+estables. Las funcionalidades se desarrollan en ramas `feature/*`, se integran
+en `develop` y se publican en `main` mediante una rama `release/*`.
+
+| Rama | Proposito |
+| --- | --- |
+| `main` | Contiene exclusivamente versiones estables listas para entrega. Cada version publicada queda identificada con un tag, como `v1.0.0`. |
+| `develop` | Rama principal de integracion. Reune las funcionalidades terminadas antes de preparar una release. |
+| `feature/products-service` | Implementacion del microservicio de productos, JSON API, persistencia, Swagger y pruebas. |
+| `feature/inventory-service` | Implementacion del microservicio de inventario, compras, comunicacion HTTP, API key, timeout, reintentos y pruebas. |
+| `feature/vue-client` | Implementacion del cliente Vue para administrar productos, inventario y compras. |
+| `feature/docs-and-deployment` | Docker Compose, Dockerfiles, OpenAPI, Postman, diagramas y documentacion inicial. |
+| `feature/docs-git-flow` | Actualizaciones a la documentacion de la estrategia Git Flow. |
+| `release/v1.0.0` | Validacion y preparacion de la primera entrega estable antes de fusionarla en `main`. |
+| `release/v1.0.1` | Actualizacion documental de la entrega, sin cambios funcionales. |
+
+Todas las ramas feature se fusionan en `develop` usando `--no-ff` para conservar
+la trazabilidad. Una release validada se fusiona en `main`, se etiqueta y se
+sincroniza nuevamente con `develop`.
+
+El historial y los comandos utilizados se describen en
+[`docs/git-flow.md`](docs/git-flow.md).
 
 ## Uso de IA
 
