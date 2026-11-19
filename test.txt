@@ -1,0 +1,3 @@
+oc get pods -o custom-columns='POD:.metadata.name,CPU:.spec.containers[*].resources.limits.cpu,MEM:.spec.containers[*].resources.limits.memory,INIT_CPU:.spec.initContainers[*].resources.limits.cpu,INIT_MEM:.spec.initContainers[*].resources.limits.memory,OVERHEAD_CPU:.spec.overhead.cpu,OVERHEAD_MEM:.spec.overhead.memory'
+
+oc get deployments -o custom-columns='DEPLOY:.metadata.name,REPLICAS:.spec.replicas,CPU:.spec.template.spec.containers[*].resources.limits.cpu,MEM:.spec.template.spec.containers[*].resources.limits.memory'
