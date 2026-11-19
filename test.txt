@@ -1,3 +1,4 @@
-oc get pods -o custom-columns='POD:.metadata.name,CPU:.spec.containers[*].resources.limits.cpu,MEM:.spec.containers[*].resources.limits.memory,INIT_CPU:.spec.initContainers[*].resources.limits.cpu,INIT_MEM:.spec.initContainers[*].resources.limits.memory,OVERHEAD_CPU:.spec.overhead.cpu,OVERHEAD_MEM:.spec.overhead.memory'
+oc get pod tools1-6c7dc87664-fhss4 \
+-o jsonpath='{range .spec.initContainers[*]}{.name}{" CPU="}{.resources.limits.cpu}{" MEM="}{.resources.limits.memory}{"\n"}{end}'
 
-oc get deployments -o custom-columns='DEPLOY:.metadata.name,REPLICAS:.spec.replicas,CPU:.spec.template.spec.containers[*].resources.limits.cpu,MEM:.spec.template.spec.containers[*].resources.limits.memory'
+oc get deploy tools1 -o yaml
